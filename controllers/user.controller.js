@@ -63,8 +63,10 @@ const registerUser = async (req , res) => {
         from: process.env.MAILTRAP_SENDEREMAIL,
         to: user.email,
         subject: "Confermation email",
-        text: "Hi there and welcome to localhost", // plain‑text body
-        html: "<p></p>Don't forget The <b>localhost</b></p>", // HTML body
+        text: `Please click on the following link
+            <a href={process.env.BASE_URL}/api/v1/users/varify/${token}>$</a>
+        `, // plain‑text body
+        html: "<p></p>Don't forget<b> The localhost</b></p>", // HTML body
     }
     const info = await transport.sendMail(mailOptions)
     console.log(info)
