@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-
+import bcrypt, { genSalt } from "bcryptjs";
 const UserSchema = new mongoose.Schema({
     name: String,
     email: String,
@@ -24,6 +24,15 @@ const UserSchema = new mongoose.Schema({
         type: Date
     },
 } , { timestamps: true });
+
+// Hooks
+UserSchema.pre("save" , async function (next) {
+    if(this.isModified("password")) {
+        const salt_round = await genSalt(10)
+        this.password = await bcrypt.hash(this.password , salt_round)
+    }
+    next();
+})
 
 
 const User = mongoose.model("User" , UserSchema);
