@@ -1,5 +1,8 @@
 import { User } from '../model/UserSchame.model.js'
 import crypto from 'crypto'
+import nodemailer from 'nodemailer'
+import dotenv from 'dotenv'
+dotenv.config()
 const registerUser = async (req , res) => {
     // Get user data
     const { name , email , password} = req.body;
@@ -38,14 +41,39 @@ const registerUser = async (req , res) => {
     
     // create a varification token 
 
+
     const token = crypto.randomBytes(32).toString("hex");
-    console.log
- 
+    user.varificationToken = token;
     // save varification token in DB 
+    await user.save();
+ 
  
     // send token as email to 
+    // SEND MAIL
+    const transport = nodemailer.createTransport({
+        host: process.env.MAILTRAP_HOST,
+        port:  process.env.MAILTRAP_PORT,
+        secure: false,
+        auth: {
+            user:  process.env.MAILTRAP_USERNAME,
+            pass:  process.env.MAILTRAP_PASSWORD
+        }
+    });
+    const mailOptions = {
+        from: process.env.MAILTRAP_SENDEREMAIL,
+        to: user.email,
+        subject: "Confermation email",
+        text: "Hi there and welcome to localhost", // plain‑text body
+        html: "<p></p>Don't forget The <b>localhost</b></p>", // HTML body
+    }
+    const info = await transport.sendMail(mailOptions)
+    console.log(info)
  
     // send success status to Client/User
+    res.status(201).json({
+        success: true,
+        message: "User register successfully"
+    })
 
    }catch(error) {
         console.log(error.message)
