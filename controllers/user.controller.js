@@ -3,13 +3,14 @@ import crypto from 'crypto'
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv'
 import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 dotenv.config()
 
 
 const registerUser = async (req , res) => {
     // Get user data
     const { name , email , password} = req.body;
-    console.log(req.body)
+
     // validate
     if(!name || !email || !password) {
         return res.status(400).json({
@@ -30,15 +31,17 @@ const registerUser = async (req , res) => {
     }
     // create user in db
     // encrypt the password
-    const salt_round = await bcrypt.genSalt(10);
-    const hash_password = await bcrypt.hash(password , salt_round)
+    // const salt_round = await bcrypt.genSalt(10);
+    // const hash_password = await bcrypt.hash(password , salt_round)
 
 
     const user = await User.create({
         name,
         email,
-        password: hash_password,
+        password,
     })
+
+   
 
     if(!user) {
         return res.status(400).json({
@@ -93,9 +96,6 @@ const registerUser = async (req , res) => {
             error: error.message,
         })
    }
-    
-
-
 };
 
 
@@ -144,4 +144,66 @@ const varifyUser = async (req , res) => {
         })
     }
 }
-export { registerUser , varifyUser };
+
+
+const login = async (req , res) => {
+    // get data
+    // validate
+    // userExists ot not
+    //
+    const { email , password } = req.body;
+    if(!email || !password) {
+        return res.status(400).json({
+            success: false,
+            message: "invalid email and password"
+        })
+    }
+    try{
+
+        const userExists = await User.findOne({ email });
+        if(!userExists) {
+            return res.status(400).json({
+                success: false,
+                message: "user not exist"
+            })
+        }
+        const isMatchPassword = await bcrypt.compare(password , userExists.password)
+        console.log(isMatchPassword)
+        if(!isMatchPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "invalid email or password"
+            })
+        }
+
+        // json web token
+        const token = jwt.sign(
+            {
+                id: userExists._id,
+                name: userExists.name,
+                email: userExists.email,
+                role: userExists.role
+            },
+            {
+                expiresIn: '24h'
+            },
+            process.env.SECRET_KEY,
+        );
+        console.log(jsonToken)
+
+        // store token on cookies
+
+
+        res.status().json({
+            success: true,
+            message: "Login successful",
+            response: token,
+        })
+
+    }catch(error){ 
+        console.log()
+    }
+}
+
+
+export { registerUser , varifyUser , login };
