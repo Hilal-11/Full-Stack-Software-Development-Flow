@@ -192,6 +192,12 @@ const login = async (req , res) => {
         console.log(jsonToken)
 
         // store token on cookies
+        const cookieOptions = {
+            httpOnly: true,
+            secure: true,
+            maxAge: Date.now() * 24 * 60 * 60 * 1000, // 24 hours
+        }   
+        res.cookie("token" , token , cookieOptions )
 
 
         res.status().json({
