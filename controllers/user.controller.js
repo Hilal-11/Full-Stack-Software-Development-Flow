@@ -1,4 +1,5 @@
 import { User } from '../model/UserSchame.model.js'
+import crypto from 'crypto'
 const registerUser = async (req , res) => {
     // Get user data
     const { name , email , password} = req.body;
@@ -22,20 +23,30 @@ const registerUser = async (req , res) => {
         })
     }
     // create user in db
-    const response = await User.create({
+    const user = await User.create({
         name,
         email,
         password,
     })
+
+    if(!user) {
+        return res.status(400).json({
+            success: false,
+            message: "User not register"
+        })
+    }
     
     // create a varification token 
+
+    const token = crypto.randomBytes(32).toString("hex");
+    console.log
  
     // save varification token in DB 
  
     // send token as email to 
  
     // send success status to Client/User
-    
+
    }catch(error) {
         console.log(error.message)
         return res.status(501).json({
