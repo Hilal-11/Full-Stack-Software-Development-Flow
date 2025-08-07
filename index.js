@@ -2,6 +2,7 @@ import express, { urlencoded } from 'express'
 import dotenv from 'dotenv'
 dotenv.config()
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import connectDB from './utils/database.js'
 import userRoutes from './routes/user.routes.js'
 const app = express();
@@ -16,7 +17,7 @@ app.use(cors({
 }))
 app.use(express.json()) // accept json data
 app.use(urlencoded({ extended: true} )) // some parameters on url encoded
-
+app.use(cookieParser()) // cookie parser for acceassing the cookies
 app.get("/" , (req , res) => {
     res.send("<h1>Hello Code 404</h1>")
 });
