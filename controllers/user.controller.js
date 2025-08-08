@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer'
 import dotenv from 'dotenv'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { useEffect } from 'react'
 dotenv.config()
 
 
@@ -197,17 +198,27 @@ const login = async (req , res) => {
             secure: true,
             maxAge: Date.now() * 24 * 60 * 60 * 1000, // 24 hours
         }   
-        res.cookie("token" , token , cookieOptions )
+        res.cookie("token" , token , cookieOptions)
 
 
         res.status().json({
             success: true,
             message: "Login successful",
             response: token,
+            user: {
+                id: userExists._id,
+                name: userExists.name,
+                role: useEffect.role
+            }
         })
 
     }catch(error){ 
-        console.log()
+        console.log(error.message)
+        return res.status(400).json({
+            success: false,
+            message: "Failed to login",
+            error: error.message
+        })
     }
 }
 
