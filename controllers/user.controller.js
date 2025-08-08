@@ -219,7 +219,57 @@ const login = async (req , res) => {
     }
 }
 
-// const forgetPassword = async (req , res) => {
+const userProfile = async (req , res) => {
+    try{
+        console.log(req.user)
+        const userId  = req.user.id
+        console.log(userId)
+        const response = await User.findById(userId.toString()).select('-password')
+        console.log("Response = ", response)
+        if(!response) {
+            return res.status(400).json({
+                success: false,
+                message: "user not found"
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: "user info successfully fetched",
+            data: response
+        })
+    }catch(error){
+        console.log(error.message)
+        res.status(400).json({
+            success: false,
+            message: "failed to get user profile",
+            error: error.message
+        })
+    }
+}
+
+
+const logout = async (req , res) => {
+    try{
+        res.cookie('token' , '' , {
+            expires: new Date(0)
+        })
+        
+        res.status().json({
+            success: true,
+            message: "logout successfully"
+        })
+    }catch(error){
+        console.log(error)
+        return res.status(400).json({
+            success: false,
+            message: "failed to logout"
+        })
+    }   
+}
+
+
+
+const forgetPassword = async (req , res) => {
 //     const { email , newPassword } = req.body;
 //     if(!email || !newPassword) {
 //         return res.status(400).json({
@@ -254,7 +304,15 @@ const login = async (req , res) => {
 //             error: error.messsage
 //         })
 //     }
-// }
+}
 
+const resetPassword = async (req , res) => {
+    try{
 
-export { registerUser , varifyUser , login };
+    
+    }catch(error){
+
+    }
+}
+
+export { registerUser , varifyUser , login , userProfile , logout , forgetPassword , resetPassword};
