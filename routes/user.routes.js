@@ -5,7 +5,7 @@ import { login, registerUser, varifyUser } from '../controllers/user.controller.
 
 router.post('/register' , registerUser)
 router.get('/varify/:token' , varifyUser)
-router.get('/login' , login)
+router.post('/login' , login)
 
 
 
