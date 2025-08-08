@@ -4,7 +4,6 @@ import nodemailer from 'nodemailer'
 import dotenv from 'dotenv'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { useEffect } from 'react'
 dotenv.config()
 
 
@@ -111,6 +110,7 @@ const varifyUser = async (req , res) => {
     // send success response 
     try{
         const { token } = req.params;
+        console.log(token)
         if(!token) {
             return res.status(400).json({
                 success: false,
@@ -185,30 +185,27 @@ const login = async (req , res) => {
                 email: userExists.email,
                 role: userExists.role
             },
-            {
-                expiresIn: '24h'
-            },
-            process.env.SECRET_KEY,
+            process.env.SECRET_KEY
         );
-        console.log(jsonToken)
+        console.log(token)
 
         // store token on cookies
         const cookieOptions = {
             httpOnly: true,
             secure: true,
-            maxAge: Date.now() * 24 * 60 * 60 * 1000, // 24 hours
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
         }   
         res.cookie("token" , token , cookieOptions)
 
 
-        res.status().json({
+        res.status(200).json({
             success: true,
             message: "Login successful",
             response: token,
             user: {
                 id: userExists._id,
                 name: userExists.name,
-                role: useEffect.role
+                role: userExists.role
             }
         })
 
@@ -221,6 +218,43 @@ const login = async (req , res) => {
         })
     }
 }
+
+// const forgetPassword = async (req , res) => {
+//     const { email , newPassword } = req.body;
+//     if(!email || !newPassword) {
+//         return res.status(400).json({
+//             success: false,
+//             message: "invalid email or password"
+//         })
+//     }
+//     try{    
+
+//         const userExists = await User.findOne({ email })
+//         if(!userExists) {
+//             return res.status(400).json( {
+//                 success: false,
+//                 messsage: "invalid email, failed to forget password"
+//             })
+//         }
+
+//         userExists.password = newPassword;
+//         await User.save();
+
+//         res.status().json({
+//             success: true,
+//             message: "successfully change password",
+//         })
+        
+
+//     }catch(error) {
+//         console.log(error.message)
+//         return res.status(400).json({
+//             success: false,
+//             message: "",
+//             error: error.messsage
+//         })
+//     }
+// }
 
 
 export { registerUser , varifyUser , login };
