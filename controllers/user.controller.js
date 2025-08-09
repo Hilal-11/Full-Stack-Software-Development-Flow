@@ -232,18 +232,20 @@ const userProfile = async (req , res) => {
                 message: "user not found"
             })
         }
-        res.status(200).json({
+        return res.json({
             success: true,
             message: "user info successfully fetched",
             data: response
         })
     }catch(error){
         console.log(error.message)
-        res.status(400).json({
+        if(!res.headersSent) {
+            res.status(400).json({
             success: false,
             message: "failed to get user profile",
             error: error.message
         })
+        }
     }
 }
 
