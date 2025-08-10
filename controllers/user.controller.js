@@ -273,7 +273,7 @@ const forgetPassword = async (req , res) => {
     // get email 
     // validation
     // isExists or Not
-    // reset token + reset expiry ==> Date.now() + 10 * 60 * 1000
+    // generate token + with expiry ==> Date.now() + 10 * 60 * 1000
     // user.save()
     // send email
     // design url
@@ -293,8 +293,30 @@ const forgetPassword = async (req , res) => {
             message: "user not exists"
         })
     }
+    const token = jwt.sign(
+        {
+            userId: user._id,
+            email: user.email,
+            role: user.role
+        },
+        process.env.SECRET_KEY,
+        {
+            expiresIn: Date.now() + 10 * 60 * 1000
+        }
+    );
+
+    user.resetPasswordToken = token,
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000
+    await user.save();
 
 
+    // send email -----> fro reseting the password
+    
+
+    res.status(200).json({
+        success: true,
+        message: "Forget password link send successfully"
+    })
 }
 
 const resetPassword = async (req , res) => {
