@@ -311,7 +311,26 @@ const forgetPassword = async (req , res) => {
 
 
     // send email -----> fro reseting the password
-    
+    const transport = {
+        host: process.env.MAILTRAP_HOST,
+        port: process.env.MAILTRAP_PORT,
+        auth: {
+            user: process.env.MAILTRAP_USERNAME,
+            pass: process.env.MAILTRAP_PASSWORD,
+        },
+        secure: false,
+    }
+    const mailOptions = {
+        from: ,
+        to: ,
+        subject: ,
+        text: ,
+        html: ,
+        
+    }
+    const sendMail = await transport.sendMail({
+
+    })
 
     res.status(200).json({
         success: true,
