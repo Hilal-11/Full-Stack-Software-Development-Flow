@@ -252,11 +252,8 @@ const userProfile = async (req , res) => {
 
 const logout = async (req , res) => {
     try{
-        res.cookie('token' , '' , {
-            expires: new Date(0)
-        })
-        
-        res.status().json({
+        res.cookie("token" , "" , {})
+        res.status(200).json({
             success: true,
             message: "logout successfully"
         })
@@ -272,48 +269,64 @@ const logout = async (req , res) => {
 
 
 const forgetPassword = async (req , res) => {
-//     const { email , newPassword } = req.body;
-//     if(!email || !newPassword) {
-//         return res.status(400).json({
-//             success: false,
-//             message: "invalid email or password"
-//         })
-//     }
-//     try{    
 
-//         const userExists = await User.findOne({ email })
-//         if(!userExists) {
-//             return res.status(400).json( {
-//                 success: false,
-//                 messsage: "invalid email, failed to forget password"
-//             })
-//         }
+    // get email 
+    // validation
+    // isExists or Not
+    // reset token + reset expiry ==> Date.now() + 10 * 60 * 1000
+    // user.save()
+    // send email
+    // design url
 
-//         userExists.password = newPassword;
-//         await User.save();
+    const { email } = req.body;
+    if(!email) {
+        return res.status(400).json({
+            success: false,
+            message: "invalid email"
+        })
+    }
 
-//         res.status().json({
-//             success: true,
-//             message: "successfully change password",
-//         })
-        
+    const user = await User.findOne({ email })
+    if(!user) {
+        return res.status(400).json({
+            success: false,
+            message: "user not exists"
+        })
+    }
 
-//     }catch(error) {
-//         console.log(error.message)
-//         return res.status(400).json({
-//             success: false,
-//             message: "",
-//             error: error.messsage
-//         })
-//     }
+
 }
 
 const resetPassword = async (req , res) => {
+    // collect token from params
+    // passwors from body
+    // validatio
+    // find user ----> 
+    const { token } = req.params;
+    const { password } = req.body; 
     try{
 
-    
-    }catch(error){
+        const user = await User.findOne({ 
+            resetPasswordToken: token,
+            resetPasswordExpires: {$gt: Date.now()}
+        })
+        // set password in user
+        user.password = password
+        user.resetPasswordToken = "",
+        user.resetPasswordExpires = Date(0)
+        // reset resetPasswordToken and reset resetPasswordExpires
+        await user.save();
 
+        res.status(200).json({
+            success: true,
+            message: "Reset password successfully",
+        })
+    }catch(error){
+        console.log(error.message)
+        return res.status().json({
+            success: false,
+            message: "Failed to reset password"
+        })
     }
 }
 
