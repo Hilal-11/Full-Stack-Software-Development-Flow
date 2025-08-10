@@ -321,17 +321,17 @@ const forgetPassword = async (req , res) => {
         secure: false,
     }
     const mailOptions = {
-        from: ,
-        to: ,
-        subject: ,
-        text: ,
-        html: ,
-        
+        from: process.env.MAILTRAP_USERNAME,
+        to: user.email,
+        subject: "Password reset link",
+        text: "Reset the password",
+        html: `Please click on the following link
+            <a href={process.env.BASE_URL}/api/v1/users/resetPassword/${token}>$</a>`,
+
     }
-    const sendMail = await transport.sendMail({
-
-    })
-
+    const mailInfo = await transport.sendMail(mailOptions)
+    console.log(mailInfo)
+    
     res.status(200).json({
         success: true,
         message: "Forget password link send successfully"
