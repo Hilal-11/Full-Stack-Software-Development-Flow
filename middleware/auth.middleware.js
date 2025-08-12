@@ -36,5 +36,4 @@ export const isLoggedIn = async (req , res , next) =>{
             message: "failed to .....",
         })
     }
-    next()
 }
