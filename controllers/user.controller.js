@@ -99,6 +99,7 @@ const registerUser = async (req , res) => {
 };
 
 
+
 const varifyUser = async (req , res) => {
     // get token from url
     // validate isToken oe not
@@ -145,6 +146,7 @@ const varifyUser = async (req , res) => {
         })
     }
 }
+
 
 
 const login = async (req , res) => {
@@ -219,6 +221,8 @@ const login = async (req , res) => {
     }
 }
 
+
+
 const userProfile = async (req , res) => {
     try{
         console.log(req.user)
@@ -248,6 +252,7 @@ const userProfile = async (req , res) => {
         }
     }
 }
+
 
 
 const logout = async (req , res) => {
@@ -337,6 +342,8 @@ const forgetPassword = async (req , res) => {
         message: "Forget password link send successfully"
     })
 }
+
+
 
 const resetPassword = async (req , res) => {
     // collect token from params
