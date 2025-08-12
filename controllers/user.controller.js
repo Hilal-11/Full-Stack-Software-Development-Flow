@@ -232,7 +232,7 @@ const userProfile = async (req , res) => {
                 message: "user not found"
             })
         }
-        return res.json({
+        res.status(200).json({
             success: true,
             message: "user info successfully fetched",
             data: response
@@ -240,7 +240,7 @@ const userProfile = async (req , res) => {
     }catch(error){
         console.log(error.message)
         if(!res.headersSent) {
-            res.status(400).json({
+            return res.status(400).json({
             success: false,
             message: "failed to get user profile",
             error: error.message
@@ -345,8 +345,12 @@ const resetPassword = async (req , res) => {
     // find user ----> 
     const { token } = req.params;
     const { password } = req.body; 
+    // const { password , conformPassword } = req.body; 
+    // extra validation layer
+    // if(password !== conformPassword) {
+        
+    // }
     try{
-
         const user = await User.findOne({ 
             resetPasswordToken: token,
             resetPasswordExpires: {$gt: Date.now()}
