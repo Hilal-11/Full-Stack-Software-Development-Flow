@@ -28,8 +28,6 @@ export const isLoggedIn = async (req , res , next) =>{
                     message: "internal server error"
                 })
             }
-
-        
     }catch(error) {
         return res.status(400).json({
             success: false,
